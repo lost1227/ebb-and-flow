@@ -7,8 +7,9 @@ public class MovPlatformBehavior : StateTrackedObject
 {
     public GameObject waterPrefab;
 
-    protected override void trackedStart()
+    protected override void Start()
     {
+        base.Start();
         Instantiate(waterPrefab, transform.position, Quaternion.identity);
     }
 }
