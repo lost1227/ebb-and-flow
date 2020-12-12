@@ -6,11 +6,6 @@ using UnityEngine.Assertions;
 
 public class GameState : MonoBehaviour
 {
-    private enum State
-    {
-        IDLE,
-        ANIMATING
-    }
 
     private enum Direction
     {
@@ -28,18 +23,53 @@ public class GameState : MonoBehaviour
 
     private List<Move> moves = new List<Move>();
 
-    private State currentState = State.IDLE;
 
     private class Move
     {
         public Vector2 from;
         public Vector2 to;
         public Transform who;
+
+        private Vector2 pos;
+        private Vector2 vel = Vector2.zero;
+
+        private float maxSpd = 0.1f;
+        private float acc = 0.01f;
+
+        bool done = false;
         public Move(Vector2 from, Vector2 to, Transform who)
         {
             this.from = from;
             this.to = to;
             this.who = who;
+
+            pos = from;
+        }
+
+        public void tick()
+        {
+            vel += ((to - from).normalized * acc);
+            if(vel.magnitude > maxSpd)
+            {
+                vel = vel.normalized * maxSpd;
+            }
+            pos += vel;
+            
+            done = done || (vel.x > 0 && pos.x > to.x);
+            done = done || (vel.x < 0 && pos.x < to.x);
+            done = done || (vel.y > 0 && pos.y > to.y);
+            done = done || (vel.y < 0 && pos.y < to.y);
+            if(done)
+            {
+                pos = to;
+            }
+
+            who.position = pos;
+        }
+
+        public bool isDone()
+        {
+            return done;
         }
     }
 
@@ -198,25 +228,35 @@ public class GameState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        if(moves.Count == 0)
         {
-            flow(Direction.UP);
-        } else if(Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            flow(Direction.DOWN);
-        } else if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            flow(Direction.LEFT);
-        } else if(Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            flow(Direction.RIGHT);
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                flow(Direction.UP);
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                flow(Direction.DOWN);
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                flow(Direction.LEFT);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                flow(Direction.RIGHT);
+            }
         }
+        
 
         List<Move> doneMoves = new List<Move>();
         foreach(Move move in moves)
         {
-            move.who.transform.position = move.to;
-            doneMoves.Add(move);
+            move.tick();
+            if(move.isDone())
+            {
+                doneMoves.Add(move);
+            }
         }
         foreach(Move move in doneMoves)
         {
