@@ -6,13 +6,30 @@ using UnityEngine.Assertions;
 
 public class GameState : MonoBehaviour
 {
+    public enum State
+    {
+        IDLE,
+        FLOWING
+    }
+
+    private State _state = State.IDLE;
+    public State state
+    {
+        get
+        {
+            return _state;
+        }
+        set
+        {
+            _state = value;
+        }
+    }
     
     private Vector2 minpos = new Vector2(0, 0);
     private Vector2 maxpos = new Vector2(0, 0);
     private List<StateTrackedObject> water = new List<StateTrackedObject>();
     private List<StateTrackedObject> stillPlatforms = new List<StateTrackedObject>();
     private List<StateTrackedObject> movPlatforms = new List<StateTrackedObject>();
-
 
     private void updateBounds(Transform trans) {
         minpos.x = Math.Min(trans.position.x, minpos.x);

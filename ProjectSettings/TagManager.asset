@@ -13,9 +13,9 @@ TagManager:
   - UI
   - 
   - 
-  - Background
-  - My_Water
-  - Platform
+  - PlayerWalkable
+  - Player
+  - 
   - 
   - 
   - 
@@ -38,6 +38,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Default - 1
+    uniqueID: 531305035
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Default + 1
+    uniqueID: 4074370557
+    locked: 0
+  - name: Default + 2
+    uniqueID: 939720217
     locked: 0

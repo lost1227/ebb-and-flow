@@ -176,7 +176,7 @@ public class FlowPlatforms : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (moves.Count == 0)
+        if(state.state == GameState.State.IDLE)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
@@ -195,6 +195,8 @@ public class FlowPlatforms : MonoBehaviour
                 flow(Direction.RIGHT);
             }
         }
+        
+
 
 
         List<Move> doneMoves = new List<Move>();
@@ -209,6 +211,15 @@ public class FlowPlatforms : MonoBehaviour
         foreach (Move move in doneMoves)
         {
             moves.Remove(move);
+        }
+
+        if (moves.Count == 0)
+        {
+            state.state = GameState.State.IDLE;
+        }
+        else
+        {
+            state.state = GameState.State.FLOWING;
         }
     }
 
