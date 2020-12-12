@@ -156,6 +156,11 @@ public class GameState : MonoBehaviour
                     || nextState[testX, testY] == null
                     || !( nextState[testX, testY] is WaterBehavior) )
                 {
+                    // Yeah, this is a hack
+                    // I need to mark that the space previously occupied by the movPlatform is now free
+                    // However, I don't have easy access to the StateTrackedObject representing the water tile at that location
+                    // As a workaround, I'm using the StateTrackedObject representing the water tile at the space now occupied by the movPlatform
+                    nextState[x, y] = state[nextX, nextY];
                     nextState[nextX, nextY] = curr;
                     if(x != nextX || y != nextY)
                     {
