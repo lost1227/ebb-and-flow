@@ -95,11 +95,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc443831ed1a514b9433a057a1a08f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 0.005
+  playerSpeed: 4
   colliderWidth: 0.1
+  colliderOffset: 0.1
   playerColliderMask:
     serializedVersion: 2
     m_Bits: 256
+  movPlatformMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!61 &4151309835119755370
 BoxCollider2D:
   m_ObjectHideFlags: 0

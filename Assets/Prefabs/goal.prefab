@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5215398246107517032}
   - component: {fileID: 8114268275187425560}
   - component: {fileID: 4063176685224862682}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: goal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,6 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7755ca0c564e2844f863c7e0d4fe1fc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!61 &4063176685224862682
 BoxCollider2D:
   m_ObjectHideFlags: 0

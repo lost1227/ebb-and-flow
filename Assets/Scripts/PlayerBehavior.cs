@@ -6,12 +6,14 @@ using UnityEngine.Assertions;
 public class PlayerBehavior : MonoBehaviour
 {
 
-    public float playerSpeed = 0.01f;
+    public float playerSpeed = 10f;
 
     public float colliderWidth = 0.1f;
     public float colliderOffset = 0.1f;
 
     public LayerMask playerColliderMask;
+
+    public LayerMask movPlatformMask;
 
     private GameState gamestate;
     private BoxCollider2D theCollider;
@@ -27,7 +29,7 @@ public class PlayerBehavior : MonoBehaviour
     void Update()
     {
         Vector2 mov = Vector2.zero;
-        if(gamestate.state == GameState.State.IDLE)
+        if(gamestate.state == GameState.State.IDLE || gamestate.state == GameState.State.CROSSING)
         {
             if(Input.GetKey(KeyCode.W))
             {
@@ -68,12 +70,12 @@ public class PlayerBehavior : MonoBehaviour
             Vector2 hitbox_right_topLeft = new Vector2(playerRight, playerTop - colliderOffset);
             Vector2 hitbox_right_bottomRight = new Vector2(playerRight + colliderWidth, playerBottom + colliderOffset);
 
-            mov = mov.normalized * playerSpeed;
+            mov = mov.normalized * playerSpeed * Time.deltaTime;
 
             if (mov.y > 0)
             {
                 Collider2D upColl = Physics2D.OverlapArea(hitbox_up_topLeft, hitbox_up_bottomRight, playerColliderMask);
-                if(!upColl)
+                if(upColl)
                 {
                     mov.y = 0;
                     Debug.DrawLine(hitbox_up_topLeft, hitbox_up_bottomRight, Color.red);
@@ -85,7 +87,7 @@ public class PlayerBehavior : MonoBehaviour
             if(mov.y < 0)
             {
                 Collider2D downColl = Physics2D.OverlapArea(hitbox_down_topLeft, hitbox_down_bottomRight, playerColliderMask);
-                if(!downColl)
+                if(downColl)
                 {
                     mov.y = 0;
                     Debug.DrawLine(hitbox_down_topLeft, hitbox_down_bottomRight, Color.red);
@@ -97,7 +99,7 @@ public class PlayerBehavior : MonoBehaviour
             if(mov.x < 0)
             {
                 Collider2D leftColl = Physics2D.OverlapArea(hitbox_left_topLeft, hitbox_left_bottomRight, playerColliderMask);
-                if(!leftColl)
+                if(leftColl)
                 {
                     mov.x = 0;
                     Debug.DrawLine(hitbox_left_topLeft, hitbox_left_bottomRight, Color.red);
@@ -109,7 +111,7 @@ public class PlayerBehavior : MonoBehaviour
             if (mov.x > 0)
             {
                 Collider2D rightColl = Physics2D.OverlapArea(hitbox_right_topLeft, hitbox_right_bottomRight, playerColliderMask);
-                if (!rightColl)
+                if (rightColl)
                 {
                     mov.x = 0;
                     Debug.DrawLine(hitbox_right_topLeft, hitbox_right_bottomRight, Color.red);
@@ -123,6 +125,24 @@ public class PlayerBehavior : MonoBehaviour
             transform.position += (Vector3)mov;
         }
 
-
+        // gamestate.isCrossing = theCollider.IsTouchingLayers(movPlatformMask);
+        bool crossing = Physics2D.OverlapArea(theCollider.bounds.center - theCollider.bounds.extents, theCollider.bounds.center + theCollider.bounds.extents, movPlatformMask);
+        switch(gamestate.state)
+        {
+            case GameState.State.IDLE:
+                if(crossing)
+                {
+                    gamestate.state = GameState.State.CROSSING;
+                }
+                break;
+            case GameState.State.CROSSING:
+                if(!crossing)
+                {
+                    gamestate.state = GameState.State.IDLE;
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -47,6 +47,7 @@ public class FlowPlatforms : MonoBehaviour
             {
                 vel = vel.normalized * maxSpd;
             }
+            // vel *= Time.deltaTime;
             pos += vel;
 
             done = done || (vel.x > 0 && pos.x > to.x);
@@ -103,6 +104,15 @@ public class FlowPlatforms : MonoBehaviour
                 {
                     nextState[x, y] = staticCurr;
                     nextState[nextX, nextY] = dynamicCurr;
+
+                    BoxCollider2D collider = staticCurr.GetComponent<BoxCollider2D>();
+                    Assert.IsNotNull(collider);
+                    collider.enabled = true;
+
+                    collider = staticState[nextX, nextY].GetComponent<BoxCollider2D>();
+                    Assert.IsNotNull(collider);
+                    collider.enabled = false;
+
                     if (x != nextX || y != nextY)
                     {
                         moves.Add(new Move(this.state.gridToGlobal(new Vector2(x, y)), this.state.gridToGlobal(new Vector2(nextX, nextY)), dynamicCurr.transform));
@@ -176,6 +186,7 @@ public class FlowPlatforms : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if(state.state == GameState.State.IDLE)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -213,13 +224,23 @@ public class FlowPlatforms : MonoBehaviour
             moves.Remove(move);
         }
 
-        if (moves.Count == 0)
+        bool flowing = moves.Count != 0;
+        switch (state.state)
         {
-            state.state = GameState.State.IDLE;
-        }
-        else
-        {
-            state.state = GameState.State.FLOWING;
+            case GameState.State.IDLE:
+                if (flowing)
+                {
+                    state.state = GameState.State.FLOWING;
+                }
+                break;
+            case GameState.State.FLOWING:
+                if (!flowing)
+                {
+                    state.state = GameState.State.IDLE;
+                }
+                break;
+            default:
+                break;
         }
     }
 

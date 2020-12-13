@@ -3,28 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 public class GameState : MonoBehaviour
 {
     public enum State
     {
         IDLE,
-        FLOWING
+        FLOWING,
+        CROSSING,
+        LOADING
     }
+    public State state = State.IDLE;
 
-    private State _state = State.IDLE;
-    public State state
-    {
-        get
-        {
-            return _state;
-        }
-        set
-        {
-            _state = value;
-        }
-    }
-    
+    public String nextScene;
+
     private Vector2 minpos = new Vector2(0, 0);
     private Vector2 maxpos = new Vector2(0, 0);
     private List<StateTrackedObject> water = new List<StateTrackedObject>();
@@ -63,7 +56,21 @@ public class GameState : MonoBehaviour
         
     }
 
-    
+    public void loadNextScene()
+    {
+        if(state == State.LOADING)
+        {
+            return;
+        }
+        state = State.LOADING;
+        if(nextScene == null || nextScene.Length == 0)
+        {
+            Debug.LogError("No next scene!");
+            return;
+        }
+
+        SceneManager.LoadScene(nextScene);
+    }
 
     public StateTrackedObject[,] buildState()
     {
@@ -100,13 +107,19 @@ public class GameState : MonoBehaviour
         foreach (StateTrackedObject item in water)
         {
             StateTrackedObject curr = state[(int)(item.transform.position.x - minpos.x), (int)(item.transform.position.y - minpos.y)];
-            Assert.IsNull(curr);
+            if(curr != null)
+            {
+                Debug.LogError(String.Format("Overlap! {0} and {1}", item.transform, curr.transform));
+            }
             state[(int)(item.transform.position.x - minpos.x), (int)(item.transform.position.y - minpos.y)] = item;
         }
         foreach (StateTrackedObject item in stillPlatforms)
         {
             StateTrackedObject curr = state[(int)(item.transform.position.x - minpos.x), (int)(item.transform.position.y - minpos.y)];
-            Assert.IsNull(curr);
+            if (curr != null)
+            {
+                Debug.LogError(String.Format("Overlap! {0} and {1}", item.transform, curr.transform));
+            }
             state[(int)(item.transform.position.x - minpos.x), (int)(item.transform.position.y - minpos.y)] = item;
         }
 
@@ -142,6 +155,11 @@ public class GameState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.R)) {
+            state = State.LOADING;
+            Scene scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+        }
 
     }
 
