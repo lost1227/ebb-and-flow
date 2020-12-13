@@ -47,7 +47,7 @@ public class FlowPlatforms : MonoBehaviour
             {
                 vel = vel.normalized * maxSpd;
             }
-            // vel *= Time.deltaTime;
+            vel *= Time.deltaTime * 350;
             pos += vel;
 
             done = done || (vel.x > 0 && pos.x > to.x);
