@@ -24,6 +24,20 @@ public class GameState : MonoBehaviour
     private List<StateTrackedObject> stillPlatforms = new List<StateTrackedObject>();
     private List<StateTrackedObject> movPlatforms = new List<StateTrackedObject>();
 
+    private int _moves = 0;
+    public int moves
+    {
+        get
+        {
+            return _moves;
+        }
+    }
+
+    public void incMoves()
+    {
+        _moves += 1;
+    }
+
     private void updateBounds(Transform trans) {
         minpos.x = Math.Min(trans.position.x, minpos.x);
         minpos.y = Math.Min(trans.position.y, minpos.y);

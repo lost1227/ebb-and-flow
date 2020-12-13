@@ -133,6 +133,7 @@ public class FlowPlatforms : MonoBehaviour
 
     private void flow(Direction direction)
     {
+        state.incMoves();
         StateTrackedObject[,] staticState = this.state.buildStaticState();
         StateTrackedObject[,] dynamicState = this.state.buildDynamicState();
         int width = staticState.GetLength(0);
